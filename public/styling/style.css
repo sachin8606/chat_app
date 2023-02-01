@@ -1,0 +1,7 @@
+.box{
+    background-color: white;
+}
+#btn:hover{
+    cursor: pointer;
+    color: violet;
+}

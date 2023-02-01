@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>baatein-Let's Talk</title>
+    <link rel="stylesheet" href="styling/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var audio = new Audio("music/sms_sneeze.mp3");
+        var aud = new Audio("music/tone.mp3");
+    </script>
+<script>
+    document.addEventListener('keydown',function(event){
+        if (event.keyCode == 13)
+        { 
+            sendmessage();
+        }
+    });
+
+    
+    </script>
+<script>
+        var socket = io();
+        socket.on('broadcast', function (data) {
+            // console.log(data.description);
+            // document.getElementById('message-container').innerHTML += '<p1 style="color:white;">' + data.username + '</p1>';
+            alert(data.username);
+            // document.body.innerHTML +='<p1>'+ data.username +'</p1>';
+            audio.play();
+        });
+        function setusername() {
+            socket.emit('setusername', document.getElementById('name').value);
+        };
+        var user;
+        socket.on('userset', function (data) {
+            user = data.username;
+            document.body.innerHTML = '<div id="message-container" style="height: 1200px;border-style: inset;padding-left: 7px;padding-right: 7px;overflow-y: scroll;font-size:x-large;background-image: url("images/icon.png");"></div><div><input type="text" style="height: 40px;width: 80%;border-radius: 44px;font-size: 24px;padding-left: 14px;float:left;background-color:beige;" id="message"></div>\
+            <button type="button"  style="width:13%;float:right;background-color:lavender" name="button" id="mbtn" onclick="sendmessage()">Send</button>'
+        });
+        function sendmessage() {
+            var msg = document.getElementById('message').value;
+            if (msg) {
+                // document.getElementById('message-container').innerHTML +='<div><b>' + 
+                // data.user + '</b>:' + datamessage + '</div>'
+                aud.play();
+                document.getElementById('message-container').innerHTML += '<div style="color: black;float: right;clear: both;border-style: inline;width: fit-content;margin: 4px;padding: 5px;background-color: white;font-size: unset;font-family: cursive;border-radius: 18px;"><b>' +
+                    "You" + '</b>:' + msg + '</div>' 
+                socket.emit('msg', { message: msg, user: user });
+                document.getElementById('message').value = '';
+            }
+        }
+
+        socket.on('newmsg', function (data) {
+            if (user) {
+                audio.play();
+                document.getElementById('message-container').innerHTML += '<div style="color: black;float: left;clear: both;border-style: groove;width: fit-content;margin: 4px;padding: 5px;background-color: white;font-size: unset;font-family: cursive;border-radius: 18px;"><b>' +
+                    data.user + '</b>:' + data.message + '</div>' 
+            }
+        });
+
+
+        socket.on('left', function (data) {
+            if (user) {
+                alert(data.name + " left the chat");
+              
+            }
+        });
+    </script>
+
+    <!-- styling -->
+    <style>
+        
+
+        #name {
+            height: 40px;
+            border-radius: 40px;
+            font-size: 18px;
+            padding-left: 10px;
+        }
+
+        button {
+            height: 46px;
+            margin-left: 8px;
+            border-style: none;
+            border-radius: 16px;
+            width: 48px;
+            position: absolute;
+            margin-top: 2px;
+
+
+        }
+
+        img {
+            width: 40px;
+            margin-right: 40px;
+            margin-left: -2px;
+            height: 46px;
+        } 
+        body{
+            background-image: url(images/wood.jpg);
+        }
+    </style>
+
+
+</head>
+
+<body style="display: list-item;">
+   <h2 style="color: azure;">baatein-Let's chat</h2>
+    <div class="box" style="background-image: url('images/bkimg.jpg');background-position: center;background-repeat: no-repeat;background-size: cover;height: 560px;margin:auto;margin-bottom: 10px;width: 100%;">
+        
+    </div>
+    <div>
+        <input type="text" placeholder="enter your name" style="width: 80%;float: left;" id="name" name="name" value="">
+        <button type="button" id="btn" name="button" onclick="setusername()"><img src="images/icon2.png"></button>
+    </div>
+    
+</body>
+
+</html>
